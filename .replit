@@ -1,0 +1,45 @@
+entrypoint = "server.ts"
+run = "npm run start"
+modules = ["angular-node-20", "nodejs-20"]
+
+[nix]
+channel = "stable-24_05"
+
+[[ports]]
+localPort = 4200
+externalPort = 80
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Poppik Academy Website"
+
+[[workflows.workflow]]
+name = "Poppik Academy Website"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx ng serve --host 0.0.0.0 --port 3000 --disable-host-check"
+waitForPort = 3000
