@@ -68,9 +68,9 @@ export class AppComponent {
   ];
 
   careers = {
-    beauty: ['Makeup Artist', 'Hair Stylist', 'Skin Care Specialist', 'Salon Professional', 'Beauty Consultant', 'Bridal Specialist'],
-    lifestyle: ['Personal Grooming Expert', 'Image Consultant', 'Lifestyle Coach', 'Fashion Stylist', 'Content Creator', 'Etiquette Trainer'],
-    wellness: ['Wellness Coach', 'Yoga Instructor', 'Mental Wellness Guide', 'Nutrition Mentor', 'Spa Associate']
+    beauty: ['Makeup Artist', 'Hair Stylist', 'Skin Care Specialist', 'Salon Professional', 'Beauty Consultant', 'Bridal Specialist', 'Cosmetology Assistant'],
+    lifestyle: ['Personal Grooming Expert', 'Image Consultant', 'Lifestyle Coach', 'Fashion & Personal Styling Assistant', 'Social Media Personality / Content Creator', 'Professional Etiquette Trainer'],
+    wellness: ['Wellness Coach', 'Yoga & Fitness Assistant', 'Mental Wellness Guide', 'Nutrition & Healthy Lifestyle Mentor', 'Spa & Wellness Center Associate']
   };
 
   careerSupport = [
@@ -78,8 +78,8 @@ export class AppComponent {
     { icon: '🎯', title: 'Career Counselling', description: 'One-on-one sessions to choose the right career direction.' },
     { icon: '📄', title: 'Resume & Portfolio Building', description: 'We help you create a professional identity that stands out.' },
     { icon: '🎤', title: 'Interview Training', description: 'Communication, grooming, confidence, and answer preparation.' },
-    { icon: '💡', title: 'Freelancing Mentoring', description: 'Learn how to find clients, build packages, and grow your brand.' },
-    { icon: '🎓', title: 'Certification Value', description: 'Industry-recognized certification that adds value to your profile.' }
+    { icon: '💡', title: 'Freelancing & Business Mentoring', description: 'Learn how to find clients, build packages, and grow your brand.' },
+    { icon: '🎓', title: 'Certification for Better Opportunities', description: 'Industry-recognized certification that adds value to your profile.' }
   ];
 
   blogs = [
