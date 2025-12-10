@@ -18,7 +18,6 @@
       <a (click)="scrollToSection('highlights')">Highlights</a>
       <a (click)="scrollToSection('careers')">Careers</a>
       <a (click)="scrollToSection('blog')">Blog</a>
-      <a (click)="scrollToSection('verify')">Verify</a>
       <a (click)="scrollToSection('contact')" class="nav-cta">Contact Us</a>
     </nav>
   </div>
@@ -26,14 +25,15 @@
 
 <section id="home" class="hero">
   <div class="hero-slider">
-    @for (slide of slides; track slide.title; let i = $index) {
-      <div class="hero-slide" [class.active]="currentSlide === i" [style.background-image]="'url(' + slide.image + ')'">
+    @for (slide of slides; track slide.id || slide.title; let i = $index) {
+      <div class="hero-slide" [class.active]="currentSlide === i">
+        <img [src]="slide.image" alt="Slider Image" class="hero-slide-img">
       </div>
     }
   </div>
   <div class="hero-dots">
-    @for (slide of slides; track slide.title; let i = $index) {
-      <button class="dot" [class.active]="currentSlide === i" (click)="goToSlide(i)"></button>
+    @for (slide of slides; track slide.id || slide.title; let i = $index) {
+      <button class="dot" [class.active]="currentSlide === i" (click)="goToSlide(i)" [attr.aria-label]="'Go to slide ' + (i + 1)"></button>
     }
   </div>
 </section>
@@ -124,11 +124,33 @@
               <span><i>⏱</i> {{ course.duration }}</span>
               <span><i>📊</i> {{ course.level }}</span>
             </div>
-            <button class="btn btn-secondary course-btn">Learn More</button>
+              <button class="btn btn-secondary course-btn" (click)="openCourse(course)">{{ course.buttonText || 'Learn More' }}</button>
           </div>
         }
       </div>
     </div>
+
+      <!-- Course details modal -->
+      <div class="course-modal" *ngIf="selectedCourse">
+        <div class="modal-backdrop" (click)="closeCourse()"></div>
+        <div class="modal-box">
+          <button class="modal-close" (click)="closeCourse()">×</button>
+          <div class="modal-body">
+            <div class="modal-header">
+              <h2>{{ selectedCourse.title }}</h2>
+              <span class="modal-category">{{ selectedCourse.category }}</span>
+            </div>
+            <div class="modal-meta">
+              <span><i>⏱</i> {{ selectedCourse.duration }}</span>
+              <span><i>📊</i> {{ selectedCourse.level }}</span>
+            </div>
+            <p class="modal-description">{{ selectedCourse.description || selectedCourse.excerpt || 'Course details coming soon.' }}</p>
+            <div class="modal-actions">
+              <button class="btn btn-secondary" (click)="closeCourse()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     <div class="courses-features">
       <h3 class="features-title">What You Can Expect</h3>
@@ -217,14 +239,24 @@
       </div>
     </div>
 
-    <div class="partners-section">
-      <h3>Our Industry Partners</h3>
-      <div class="partners-scroll">
-        @for (partner of partners; track partner) {
-          <div class="partner-logo">{{ partner }}</div>
-        }
+    <section class="partners">
+      <div class="container">
+        <h2>Our Industry Partners</h2>
+        <div class="partners-scroll-wrapper">
+          <div class="partners-scroll">
+            @for (partner of partners; track partner.id) {
+              <div class="partner-logo">
+                @if (partner.logo) {
+                  <img [src]="partner.logo" [alt]="partner.name" [title]="partner.name">
+                } @else {
+                  <span>{{ partner.name }}</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 </section>
 
@@ -325,7 +357,7 @@
             <span class="blog-date">{{ post.date }}</span>
             <h3>{{ post.title }}</h3>
             <p>{{ post.excerpt }}</p>
-            <a class="blog-link">Read More →</a>
+            <a [routerLink]="['/blog', post.id]" class="blog-link">Read More →</a>
           </div>
         </div>
       }
@@ -420,7 +452,7 @@
 
     <div class="videos-grid">
       @for (video of videos; track video.title) {
-        <div class="video-card">
+        <div class="video-card" (click)="openVideoModal(video)" role="button" tabindex="0">
           <div class="video-thumbnail">
             <img [src]="video.thumbnail" [alt]="video.title">
             <div class="video-play">
@@ -434,6 +466,29 @@
           </div>
         </div>
       }
+    </div>
+
+    <!-- Inline Video Modal (improved UI) -->
+    <div class="video-modal-overlay" *ngIf="selectedVideoForModal">
+      <div class="video-modal-backdrop" (click)="closeVideoModal()"></div>
+      <div class="video-modal-dialog">
+        <div class="video-modal-header">
+          <div class="video-modal-title">{{ selectedVideoForModal.title || 'Video' }}</div>
+          <button class="video-modal-close" (click)="closeVideoModal()">✕</button>
+        </div>
+        <div class="video-modal-content">
+          <div class="video-player-wrap">
+            <iframe *ngIf="isYouTubeModal" [src]="youtubeEmbedUrlModal | safe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+            <video *ngIf="!isYouTubeModal && selectedVideoForModal.video_url" controls autoplay muted playsinline preload="metadata">
+              <source [src]="selectedVideoForModal.video_url" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="video-modal-body">
+            <p class="video-desc">{{ selectedVideoForModal.description || selectedVideoForModal.excerpt || '' }}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="video-categories-section">
@@ -514,65 +569,7 @@
   </div>
 </section>
 
-<section id="verify" class="section verify">
-  <div class="container">
-    <div class="verify-wrapper">
-      <div class="verify-content">
-        <span class="section-subtitle">Certificate Verification</span>
-        <h2 class="section-title">Verify Your Certificate</h2>
-        <p>Ensure the authenticity of your Poppik Academy certification in just a few clicks. Our verification system helps employers, clients, and students confirm that your skills and credentials are genuine.</p>
 
-        <div class="verify-form">
-          <input 
-            type="text" 
-            [(ngModel)]="certificateId"
-            placeholder="Enter your Certificate ID"
-            class="verify-input"
-          >
-          <button class="btn btn-primary" (click)="verifyCertificate()">Verify Now</button>
-        </div>
-
-        @if (verificationResult) {
-          <div class="verify-result" [class.valid]="verificationResult.valid" [class.invalid]="!verificationResult.valid">
-            @if (verificationResult.valid) {
-              <div class="result-success">
-                <span class="result-icon">✓</span>
-                <h4>Certificate Verified!</h4>
-                <div class="result-details">
-                  <p><strong>ID:</strong> {{ verificationResult.id }}</p>
-                  <p><strong>Name:</strong> {{ verificationResult.name }}</p>
-                  <p><strong>Course:</strong> {{ verificationResult.course }}</p>
-                  <p><strong>Date:</strong> {{ verificationResult.date }}</p>
-                </div>
-              </div>
-            } @else {
-              <div class="result-error">
-                <span class="result-icon">✗</span>
-                <h4>Certificate Not Found</h4>
-                <p>Please check the ID and try again.</p>
-              </div>
-            }
-          </div>
-        }
-
-        <div class="verify-badges">
-          <div class="badge">
-            <span>🔒</span>
-            <span>Trusted</span>
-          </div>
-          <div class="badge">
-            <span>✓</span>
-            <span>Secure</span>
-          </div>
-          <div class="badge">
-            <span>🏆</span>
-            <span>Recognized</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section id="contact" class="section contact">
   <div class="container">
@@ -645,12 +642,9 @@
       <h2>Poppik Academy - Policies & Terms</h2>
     </div>
 
-    <div class="footer-disclaimer">
-      <p>The content provided on Poppik Academy website, courses, blogs, and videos is for educational and informational purposes only. We strive for accuracy but do not guarantee completeness or outcomes. Users are responsible for their own application of skills and knowledge.</p>
-    </div>
+
 
     <div class="footer-quick-links">
-      <h3>Quick Links</h3>
       <div class="quick-links-grid">
         <a [routerLink]="['/policies']" fragment="disclaimer">⚠️ Disclaimer</a>
         <a [routerLink]="['/policies']" fragment="terms-of-use">📋 Terms of Use</a>

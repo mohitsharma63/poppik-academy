@@ -151,16 +151,6 @@
   opacity: 1;
 }
 
-.hero-slide::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-}
-
 .hero-content {
   text-align: center;
   color: white;
@@ -1711,7 +1701,7 @@
   .why-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .highlights-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1732,64 +1722,64 @@
     transition: all 0.3s;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   }
-  
+
   .nav.active {
     transform: translateY(0);
     opacity: 1;
   }
-  
+
   .menu-toggle {
     display: flex;
   }
-  
+
   .hero-title {
     font-size: 48px;
   }
-  
+
   .hero-subtitle {
     font-size: 22px;
   }
-  
+
   .about-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .blog-grid,
   .videos-grid,
   .careers-grid,
   .career-support-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .course-card {
     min-width: 280px;
   }
-  
+
   .why-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .contact-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .footer-policies {
     gap: 15px;
   }
-  
+
   .footer-policies a {
     font-size: 14px;
     padding: 10px 20px;
   }
-  
+
   .footer-header h2 {
     font-size: 26px;
   }
-  
+
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .placement-features {
     grid-template-columns: 1fr;
   }
@@ -1799,16 +1789,16 @@
   .hero-title {
     font-size: 36px;
   }
-  
+
   .hero-subtitle {
     font-size: 18px;
   }
-  
+
   .hero-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .blog-grid,
   .videos-grid,
   .careers-grid,
@@ -1816,106 +1806,106 @@
   .career-support-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .career-paths-title,
   .career-support-section h3,
   .career-footer h3 {
     font-size: 24px;
   }
-  
+
   .course-card {
     min-width: 260px;
   }
-  
+
   .why-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .why-choose {
     padding: 40px 25px;
   }
-  
+
   .highlights-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .verify-form {
     flex-direction: column;
   }
-  
+
   .video-categories,
   .video-benefits-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .video-benefits-section {
     padding: 30px 20px;
   }
-  
+
   .video-categories-title,
   .video-benefits-section h3,
   .video-footer h3 {
     font-size: 24px;
   }
-  
+
   .features-title {
     font-size: 22px;
   }
-  
+
   .course-feature {
     font-size: 15px;
   }
-  
+
   .footer-header h2 {
     font-size: 22px;
   }
-  
+
   .footer-disclaimer p {
     font-size: 14px;
   }
-  
+
   .footer-policies {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .footer-policies a {
     width: 90%;
     text-align: center;
   }
-  
+
   .contact-form-wrapper {
     padding: 30px 20px;
   }
-  
+
   .verify-badges {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .partners-scroll {
     gap: 20px;
   }
-  
+
   .partner-logo {
     min-width: 150px;
     padding: 25px 35px;
     font-size: 15px;
   }
-  
+
   .blog-grid,
   .blog-categories {
     grid-template-columns: 1fr;
   }
-  
+
   .benefits-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .blog-benefits {
     padding: 30px 20px;
   }
-  
+
   .categories-title,
   .blog-benefits h3,
   .blog-footer h3 {
@@ -1927,24 +1917,24 @@
   .hero-title {
     font-size: 28px;
   }
-  
+
   .section-title {
     font-size: 26px;
   }
-  
+
   .about-philosophy {
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .philosophy-arrow {
     display: none;
   }
-  
+
   .gallery-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .gallery-item.wide {
     grid-column: span 1;
   }
