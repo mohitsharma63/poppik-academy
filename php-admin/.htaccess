@@ -1,0 +1,14 @@
+# Ensure proper routing inside php-admin
+Options -MultiViews
+RewriteEngine On
+RewriteBase /php-admin/
+
+# Redirect accidental duplicate 'admin/admin/' to single 'admin/'
+RewriteRule ^admin/admin/(.*)$ admin/$1 [R=301,L]
+
+# If the request matches an existing file, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Otherwise hand the request to this router script
+RewriteRule ^ index.php [L,QSA]

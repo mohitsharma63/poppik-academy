@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+requireAuth();
 
 $stats = getStats($pdo);
 $recentStudents = $pdo->query("SELECT s.*, c.name as course_name FROM students s LEFT JOIN courses c ON s.course_id = c.id ORDER BY s.created_at DESC LIMIT 5")->fetchAll();

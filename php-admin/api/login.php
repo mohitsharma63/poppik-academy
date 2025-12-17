@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(json_encode(['success' => true]));
 }
 
-require_once '../config.php';
+require_once __DIR__ . '/../config.php';
 
 // Only allow POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

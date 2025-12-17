@@ -226,10 +226,9 @@ export class HomeComponent implements OnInit {
 
   // Return backend base URL safely in SSR and browser environments
   private getBackendBase(): string {
-    if (typeof window === 'undefined') return 'https://backend.poppikacademy.com/';
-    const backendHost = window.location.hostname || 'localhost';
-    const backendPort = '8000';
-    return `${window.location.protocol}//${backendHost}:${backendPort}`;
+    if (typeof window === 'undefined') return 'https://backend.poppikacademy.com';
+    // Use live backend URL
+    return 'https://backend.poppikacademy.com';
   }
 
   loadHeroSliders() {

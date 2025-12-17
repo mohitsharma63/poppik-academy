@@ -8,19 +8,12 @@ import { Observable } from 'rxjs';
 })
 export class AdminService {
   // Build an absolute backend base so the app can call PHP directly without relying on dev-server proxy.
-  // Default to localhost for SSR. When running in the browser, derive host/protocol from window.
-  private backendHost = 'localhost';
-  private backendPort = '8000';
-  // For the PHP built-in server (running with document root = php-admin) the API is at '/api/*'.
-  // Use the server root as base and let endpoints append '/api/...'.
-  private apiUrl = `http://${this.backendHost}:${this.backendPort}`;
+  // Use live backend URL for production
+  private apiUrl = 'https://backend.poppikacademy.com';
 
   constructor(private http: HttpClient) {
-    // Only access window when running in browser (avoid SSR ReferenceError)
-    if (typeof window !== 'undefined') {
-      this.backendHost = window.location.hostname || 'localhost';
-      this.apiUrl = `${window.location.protocol}//${this.backendHost}:${this.backendPort}`;
-    }
+    // Always use live backend URL
+    this.apiUrl = 'https://backend.poppikacademy.com';
   }
 
   // Authentication

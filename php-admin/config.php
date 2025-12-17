@@ -2,7 +2,7 @@
 session_start();
 
 // Load .env file (simple loader) if present one level up (project root)
-$envFile = realpath(__DIR__ . '/../.env');
+$envFile = realpath(__DIR__ . '/.env');
 if ($envFile && file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
@@ -39,13 +39,123 @@ try {
     $dbPass = getenv('DB_PASS') ?: '';
     $dbCharset = getenv('DB_CHARSET') ?: 'utf8mb4';
     $dsn = "mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset={$dbCharset}";
-    $pdo = new PDO($dsn, $dbUser, $dbPass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]);
+    
+    try {
+        $pdo = new PDO($dsn, $dbUser, $dbPass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]);
+    } catch (PDOException $e) {
+        $errorCode = $e->getCode();
+        $errorMsg = $e->getMessage();
+        
+        // Provide helpful error messages
+        if ($errorCode == 1045) {
+            die("
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Connection Error</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5; }
+        .error-box { background: white; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #d32f2f; margin-top: 0; }
+        .error-details { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; }
+        .config-info { background: #e3f2fd; padding: 15px; border-left: 4px solid #2196f3; margin: 20px 0; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+        ul { line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class=\"error-box\">
+        <h1>❌ Database Connection Failed</h1>
+        <div class=\"error-details\">
+            <strong>Error:</strong> Access denied for user '<code>{$dbUser}</code>'@'<code>{$dbHost}</code>'<br>
+            <strong>Details:</strong> {$errorMsg}
+        </div>
+        <div class=\"config-info\">
+            <h3>How to Fix:</h3>
+            <ol>
+                <li>Check if <code>php-admin/.env</code> file exists</li>
+                <li>Verify your MySQL credentials in the <code>.env</code> file:
+                    <ul>
+                        <li><code>DB_HOST</code> = {$dbHost}</li>
+                        <li><code>DB_PORT</code> = {$dbPort}</li>
+                        <li><code>DB_NAME</code> = {$dbName}</li>
+                        <li><code>DB_USER</code> = {$dbUser}</li>
+                        <li><code>DB_PASS</code> = (check your password)</li>
+                    </ul>
+                </li>
+                <li>Make sure the MySQL user exists and has proper permissions</li>
+                <li>Verify the database '<code>{$dbName}</code>' exists</li>
+                <li>If using XAMPP, default user is <code>root</code> with empty password</li>
+            </ol>
+            <p><strong>Tip:</strong> Copy <code>.env.example</code> to <code>.env</code> and update with your credentials.</p>
+            <p style=\"margin-top: 20px;\">
+                <strong>Quick Fix:</strong> 
+                <a href=\"fix-env.php\" style=\"display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 4px;\">
+                    🔧 Fix .env File Now
+                </a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>");
+        } elseif ($errorCode == 1049) {
+            die("
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Not Found</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5; }
+        .error-box { background: white; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #d32f2f; }
+        .info { background: #e3f2fd; padding: 15px; border-left: 4px solid #2196f3; margin: 20px 0; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class=\"error-box\">
+        <h1>❌ Database Not Found</h1>
+        <div class=\"info\">
+            <p>The database '<code>{$dbName}</code>' does not exist.</p>
+            <p><strong>Solution:</strong> Create the database first:</p>
+            <pre style=\"background: #f5f5f5; padding: 10px; border-radius: 4px;\">CREATE DATABASE {$dbName} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</pre>
+        </div>
+    </div>
+</body>
+</html>");
+        } else {
+            die("
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Error</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; background: #f5f5f5; }
+        .error-box { background: white; padding: 30px; border-radius: 8px; max-width: 600px; margin: 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #d32f2f; }
+        .error-details { background: #ffebee; padding: 15px; border-left: 4px solid #d32f2f; margin: 20px 0; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class=\"error-box\">
+        <h1>❌ MySQL Connection Failed</h1>
+        <div class=\"error-details\">
+            <strong>Error Code:</strong> {$errorCode}<br>
+            <strong>Message:</strong> {$errorMsg}
+        </div>
+        <p>Please check your database configuration in <code>php-admin/.env</code> file.</p>
+    </div>
+</body>
+</html>");
+        }
+    }
 
-} catch (PDOException $e) {
-    die("MySQL connection failed: " . $e->getMessage() . "\n");
+} catch (Exception $e) {
+    die("Configuration error: " . $e->getMessage() . "\n");
 }
 
 function createTables($pdo, $driver = 'sqlite') {
@@ -95,11 +205,11 @@ function createTables($pdo, $driver = 'sqlite') {
 
         $pdo->exec("CREATE TABLE IF NOT EXISTS hero_sliders (
             id INT PRIMARY KEY AUTO_INCREMENT,
-            title VARCHAR(255) NOT NULL,
-            subtitle TEXT,
+            title VARCHAR(255) DEFAULT NULL,
+            subtitle TEXT DEFAULT NULL,
             image LONGTEXT,
-            button_text VARCHAR(255),
-            button_link VARCHAR(255),
+            button_text VARCHAR(255) DEFAULT NULL,
+            button_link VARCHAR(255) DEFAULT NULL,
             sort_order INT DEFAULT 0,
             status VARCHAR(50) DEFAULT 'Active',
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -336,5 +446,13 @@ function getStats($pdo) {
         'blogs' => $pdo->query("SELECT COUNT(*) FROM blogs")->fetchColumn(),
         'partners' => $pdo->query("SELECT COUNT(*) FROM partners")->fetchColumn()
     ];
+}
+
+// Authentication helper function
+function requireAuth() {
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: login.php');
+        exit;
+    }
 }
 ?>

@@ -8,7 +8,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once '../config.php';
+require_once __DIR__ . '/../config.php';
 
 $response = [
     'session_admin_id' => $_SESSION['admin_id'] ?? null,

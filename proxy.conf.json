@@ -1,7 +1,7 @@
 {
   "/api": {
-    "target": "https://backend.poppikacademy.com/",
-    "secure": false,
+    "target": "https://backend.poppikacademy.com",
+    "secure": true,
     "changeOrigin": true,
     "logLevel": "info"
   }

@@ -1,0 +1,13 @@
+# Disable MultiViews
+Options -MultiViews
+
+RewriteEngine On
+RewriteBase /
+
+# Serve existing files and directories directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route all other requests to the root router (index.php) so PHP can handle client routes like /login
+RewriteRule ^ index.php [L,QSA]

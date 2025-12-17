@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+requireAuth();
 
 $message = '';
 $error = '';
@@ -76,7 +77,8 @@ include 'includes/header.php';
                         <td><?= htmlspecialchars($course['duration'] ?? '-') ?></td>
                         <td><span class="status-badge <?= strtolower($course['status']) ?>"><?= $course['status'] ?></span></td>
                         <td class="actions">
-                            <button class="action-btn edit" onclick="editCourse(<?= htmlspecialchars(json_encode($course)) ?>)">
+                            <button class="action-btn edit" onclick="editCourse(<?= $course['id'] ?>)" 
+                                data-course='<?= htmlspecialchars(json_encode($course, JSON_HEX_APOS | JSON_HEX_QUOT)) ?>'>
                                 <span class="material-icons">edit</span>
                             </button>
                             <form method="POST" style="display:inline;" onsubmit="return confirmDelete('Delete this course?')">
@@ -190,13 +192,15 @@ include 'includes/header.php';
 </div>
 
 <script>
-function editCourse(course) {
-    document.getElementById('edit_id').value = course.id;
-    document.getElementById('edit_name').value = course.name;
-    document.getElementById('edit_description').value = course.description || '';
-    document.getElementById('edit_duration').value = course.duration || '';
-    document.getElementById('edit_category').value = course.category || 'Beauty';
-    document.getElementById('edit_status').value = course.status || 'Active';
+function editCourse(id) {
+    const btn = event.target.closest('button');
+    const courseData = JSON.parse(btn.getAttribute('data-course'));
+    document.getElementById('edit_id').value = courseData.id;
+    document.getElementById('edit_name').value = courseData.name || '';
+    document.getElementById('edit_description').value = courseData.description || '';
+    document.getElementById('edit_duration').value = courseData.duration || '';
+    document.getElementById('edit_category').value = courseData.category || 'Beauty';
+    document.getElementById('edit_status').value = courseData.status || 'Active';
     openModal('editModal');
 }
 </script>
