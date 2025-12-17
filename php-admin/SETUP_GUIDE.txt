@@ -68,7 +68,7 @@ DEBUG ENDPOINTS
 -------------------------------
 
 Check your authentication status:
-  http://localhost:8000/api/auth-check.php?admin_id=YOUR_ADMIN_ID
+  https://backend.poppikacademy.com//api/auth-check.php?admin_id=YOUR_ADMIN_ID
 
 This will show:
 - Session variables

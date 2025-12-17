@@ -31,15 +31,19 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     try {
-      const v = localStorage.getItem('admin.sidebarCollapsed');
-      if (v !== null) this.sidebarCollapsed = JSON.parse(v);
+      if (typeof window !== 'undefined') {
+        const v = localStorage.getItem('admin.sidebarCollapsed');
+        if (v !== null) this.sidebarCollapsed = JSON.parse(v);
+      }
     } catch (e) {}
   }
 
   toggleSidebar() {
     this.sidebarCollapsed = !this.sidebarCollapsed;
     // persist preference
-    try { localStorage.setItem('admin.sidebarCollapsed', JSON.stringify(this.sidebarCollapsed)); } catch(e){}
+    try {
+      if (typeof window !== 'undefined') localStorage.setItem('admin.sidebarCollapsed', JSON.stringify(this.sidebarCollapsed));
+    } catch(e){}
   }
 
   toggleProfileMenu() {
@@ -64,7 +68,7 @@ export class AdminComponent implements OnInit {
   logout() {
     this.closeProfileMenu();
     // placeholder logout behaviour
-    localStorage.removeItem('authToken');
+    try { if (typeof window !== 'undefined') localStorage.removeItem('authToken'); } catch(e) {}
     this.router.navigate(['/login']);
   }
 }

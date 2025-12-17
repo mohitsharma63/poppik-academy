@@ -78,15 +78,15 @@ Reset admin password to admin123:
   php reset_password.php
 
 Debug authentication status:
-  http://localhost:8000/api/auth-check.php?admin_id=1
+  https://backend.poppikacademy.com//api/auth-check.php?admin_id=1
   (Shows session, headers, and other debug info)
 
 Check if login works:
-  POST http://localhost:8000/api/login.php
+  POST https://backend.poppikacademy.com//api/login.php
   Body: {"email": "admin@example.com", "password": "admin123"}
 
 Test change-password:
-  POST http://localhost:8000/api/change-password.php?admin_id=1
+  POST https://backend.poppikacademy.com//api/change-password.php?admin_id=1
   Body: {"currentPassword": "admin123", "newPassword": "newpass"}
 
 FILES INVOLVED:

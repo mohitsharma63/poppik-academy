@@ -123,9 +123,7 @@ export class BlogDetailComponent implements OnInit {
         if (resp && resp.success && Array.isArray(resp.data)) {
           const found = resp.data.find((b: any) => String(b.id) === String(id));
           if (found) {
-            const backendHost = window.location.hostname || 'localhost';
-            const backendPort = '8000';
-            const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+            const backendBase = this.getBackendBase();
             const image = found.image ? this.normalizeImageUrl(found.image, backendBase) : '';
             this.blog = {
               id: found.id,
@@ -156,5 +154,12 @@ export class BlogDetailComponent implements OnInit {
     if (/^https?:\/\//i.test(url)) return url;
     if (url.charAt(0) !== '/') url = '/' + url;
     return backendBase + url;
+  }
+
+  private getBackendBase(): string {
+    if (typeof window === 'undefined') return 'https://backend.poppikacademy.com/';
+    const backendHost = window.location.hostname || 'localhost';
+    const backendPort = '8000';
+    return `${window.location.protocol}//${backendHost}:${backendPort}`;
   }
 }

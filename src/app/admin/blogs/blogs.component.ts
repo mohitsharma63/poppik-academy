@@ -128,7 +128,9 @@ export class BlogsComponent implements OnInit {
   }
 
   execCommand(command: string, value?: string) {
-    document.execCommand(command, false, value || '');
+    if (typeof document !== 'undefined') {
+      try { document.execCommand(command, false, value || ''); } catch (e) {}
+    }
   }
 
   onEditorBlur(event: any) {

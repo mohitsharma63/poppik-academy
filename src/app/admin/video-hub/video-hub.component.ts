@@ -48,9 +48,7 @@ export class VideoHubComponent implements OnInit {
       next: (response) => {
         if (response.success) {
           // Normalize thumbnails and video URLs to absolute paths so players can load them
-          const backendHost = window.location.hostname || 'localhost';
-          const backendPort = '8000';
-          const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+          const backendBase = this.getBackendBase();
           this.videos = (response.data || []).map((v: any) => {
             const thumb = v.thumbnail || '';
             const vidUrl = v.video_url || v.videoUrl || '';
@@ -90,9 +88,7 @@ export class VideoHubComponent implements OnInit {
     // normalize URL if necessary
     let url = video.video_url || video.videoUrl || '';
     if (url && !/^https?:\/\//i.test(url)) {
-      const backendHost = window.location.hostname || 'localhost';
-      const backendPort = '8000';
-      const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+      const backendBase = this.getBackendBase();
       if (url.charAt(0) !== '/') url = '/' + url;
       url = backendBase + url;
     }
@@ -114,7 +110,9 @@ export class VideoHubComponent implements OnInit {
     }
     // prevent background scroll while playing
     // Prevent background scroll (inline style so it applies globally)
-    try { document.body.style.overflow = 'hidden'; } catch(e) {}
+    if (typeof document !== 'undefined') {
+      try { document.body.style.overflow = 'hidden'; } catch(e) {}
+    }
   }
 
   stopVideo() {
@@ -123,7 +121,17 @@ export class VideoHubComponent implements OnInit {
     this.showPlayModal = false;
     this.isYouTubeAdmin = false;
     this.youtubeEmbedUrlAdmin = '';
-    try { document.body.style.overflow = ''; } catch(e) {}
+    if (typeof document !== 'undefined') {
+      try { document.body.style.overflow = ''; } catch(e) {}
+    }
+  }
+
+  // Return backend base URL safely in SSR and browser environments
+  private getBackendBase(): string {
+    if (typeof window === 'undefined') return 'https://backend.poppikacademy.com/';
+    const backendHost = window.location.hostname || 'localhost';
+    const backendPort = '8000';
+    return `${window.location.protocol}//${backendHost}:${backendPort}`;
   }
 
   openAddModal() {

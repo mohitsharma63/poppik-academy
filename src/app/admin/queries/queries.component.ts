@@ -43,7 +43,11 @@ export class QueriesComponent implements OnInit {
       const subject = encodeURIComponent(q.subject || 'Re: Your query');
       const body = encodeURIComponent(`\n\n----\nOriginal message:\n${q.message || ''}`);
       // open default mail client
-      window.location.href = `mailto:${q.email}?subject=${subject}&body=${body}`;
+      if (typeof window !== 'undefined') {
+        window.location.href = `mailto:${q.email}?subject=${subject}&body=${body}`;
+      } else {
+        console.log('Skipping mailto during prerender for', q.email);
+      }
     } else {
       alert('No email address available for this query.');
     }

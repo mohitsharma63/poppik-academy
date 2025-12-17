@@ -8,14 +8,20 @@ import { Observable } from 'rxjs';
 })
 export class AdminService {
   // Build an absolute backend base so the app can call PHP directly without relying on dev-server proxy.
-  // Default to same host as the browser but port 8000 (where the PHP built-in server usually runs in this project).
-  private backendHost = window.location.hostname || 'localhost';
+  // Default to localhost for SSR. When running in the browser, derive host/protocol from window.
+  private backendHost = 'localhost';
   private backendPort = '8000';
   // For the PHP built-in server (running with document root = php-admin) the API is at '/api/*'.
   // Use the server root as base and let endpoints append '/api/...'.
-  private apiUrl = `${window.location.protocol}//${this.backendHost}:${this.backendPort}`;
+  private apiUrl = `http://${this.backendHost}:${this.backendPort}`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Only access window when running in browser (avoid SSR ReferenceError)
+    if (typeof window !== 'undefined') {
+      this.backendHost = window.location.hostname || 'localhost';
+      this.apiUrl = `${window.location.protocol}//${this.backendHost}:${this.backendPort}`;
+    }
+  }
 
   // Authentication
   login(email: string, password: string): Observable<any> {
@@ -23,29 +29,47 @@ export class AdminService {
   }
 
   getAdminId(): number | null {
-    const adminId = localStorage.getItem('adminId');
-    console.log('[AdminService] getAdminId():', adminId);
-    return adminId ? parseInt(adminId, 10) : null;
+    try {
+      if (typeof window === 'undefined' || typeof localStorage === 'undefined') return null;
+      const adminId = localStorage.getItem('adminId');
+      console.log('[AdminService] getAdminId():', adminId);
+      return adminId ? parseInt(adminId, 10) : null;
+    } catch (e) {
+      return null;
+    }
   }
 
   setAdminId(adminId: number): void {
     console.log('[AdminService] setAdminId():', adminId);
-    // Store adminId for app usage
-    localStorage.setItem('adminId', adminId.toString());
-    // Also set a token flag expected by AdminAuthGuard so route guards allow access
-    localStorage.setItem('adminToken', adminId.toString());
+    try {
+      if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+      // Store adminId for app usage
+      localStorage.setItem('adminId', adminId.toString());
+      // Also set a token flag expected by AdminAuthGuard so route guards allow access
+      localStorage.setItem('adminToken', adminId.toString());
+    } catch (e) {}
   }
 
   isLoggedIn(): boolean {
-    // Consider either an adminId or an adminToken as logged-in indicators
-    return this.getAdminId() !== null || !!(localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken'));
+    try {
+      // Consider either an adminId or an adminToken as logged-in indicators
+      if (this.getAdminId() !== null) return true;
+      if (typeof window === 'undefined') return false;
+      const token = (typeof localStorage !== 'undefined' && localStorage.getItem('adminToken')) || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('adminToken'));
+      return !!token;
+    } catch (e) {
+      return false;
+    }
   }
 
   clearAdminSession(): void {
-    localStorage.removeItem('adminId');
-    // Remove the token flag too
-    localStorage.removeItem('adminToken');
-    sessionStorage.removeItem('adminToken');
+    try {
+      if (typeof window === 'undefined') return;
+      localStorage.removeItem('adminId');
+      // Remove the token flag too
+      localStorage.removeItem('adminToken');
+      sessionStorage.removeItem('adminToken');
+    } catch (e) {}
   }
 
   // Dashboard Stats

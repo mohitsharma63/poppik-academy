@@ -84,9 +84,7 @@ export class HomeComponent implements OnInit {
     this.adminService.getVideos().subscribe({
       next: (response) => {
         if (response.success && response.data.length > 0) {
-          const backendHost = window.location.hostname || 'localhost';
-          const backendPort = '8000';
-          const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+              const backendBase = this.getBackendBase();
 
           this.videos = response.data.slice(0, 3).map((v: any) => ({
             id: v.id,
@@ -120,9 +118,7 @@ export class HomeComponent implements OnInit {
     this.adminService.getGallery().subscribe({
       next: (response) => {
         if (response.success && response.data.length > 0) {
-          const backendHost = window.location.hostname || 'localhost';
-          const backendPort = '8000';
-          const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+              const backendBase = this.getBackendBase();
           this.galleryImages = response.data.map((item: any) => this.normalizeImageUrl(item.image, backendBase));
         } else {
           this.setDefaultGallery();
@@ -150,9 +146,7 @@ export class HomeComponent implements OnInit {
     this.adminService.getPartners().subscribe({
       next: (response) => {
         if (response.success && response.data.length > 0) {
-          const backendHost = window.location.hostname || 'localhost';
-          const backendPort = '8000';
-          const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+              const backendBase = this.getBackendBase();
           this.partners = response.data.map((p: any) => ({ ...p, logo: this.normalizeImageUrl(p.logo, backendBase) }));
         } else {
           this.setDefaultPartners();
@@ -181,9 +175,7 @@ export class HomeComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data.length > 0) {
           // ensure image URLs are absolute so the browser can load them
-          const backendHost = window.location.hostname || 'localhost';
-          const backendPort = '8000';
-          const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+              const backendBase = this.getBackendBase();
 
           this.blogs = response.data.slice(0, 3).map((blog: any) => {
             let img = this.normalizeImageUrl(blog.image || '', backendBase) || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400';
@@ -232,6 +224,14 @@ export class HomeComponent implements OnInit {
     return backendBase + url;
   }
 
+  // Return backend base URL safely in SSR and browser environments
+  private getBackendBase(): string {
+    if (typeof window === 'undefined') return 'https://backend.poppikacademy.com/';
+    const backendHost = window.location.hostname || 'localhost';
+    const backendPort = '8000';
+    return `${window.location.protocol}//${backendHost}:${backendPort}`;
+  }
+
   loadHeroSliders() {
     this.adminService.getHeroSliders().subscribe({
       next: (response) => {
@@ -248,9 +248,7 @@ export class HomeComponent implements OnInit {
             }
 
             // Otherwise, normalize the URL
-            const backendHost = window.location.hostname || 'localhost';
-            const backendPort = '8000';
-            const backendBase = window.location.protocol + '//' + backendHost + ':' + backendPort;
+            const backendBase = this.getBackendBase();
 
             return {
               id: slider.id,
@@ -348,14 +346,18 @@ export class HomeComponent implements OnInit {
   openVideoModal(video: any) {
     this.selectedVideoForModal = video;
     this.processVideoForModal();
-    try { document.body.style.overflow = 'hidden'; } catch (e) {}
+    if (typeof document !== 'undefined') {
+      try { document.body.style.overflow = 'hidden'; } catch (e) {}
+    }
   }
 
   closeVideoModal() {
     this.selectedVideoForModal = null;
     this.isYouTubeModal = false;
     this.youtubeEmbedUrlModal = '';
-    try { document.body.style.overflow = ''; } catch (e) {}
+    if (typeof document !== 'undefined') {
+      try { document.body.style.overflow = ''; } catch (e) {}
+    }
   }
 
   private processVideoForModal() {
@@ -378,13 +380,17 @@ export class HomeComponent implements OnInit {
   openCourse(course: any) {
     this.selectedCourse = course;
     // optional: focus management or prevent background scroll
-    document.body.classList.add('modal-open');
+    if (typeof document !== 'undefined') {
+      try { document.body.classList.add('modal-open'); } catch (e) {}
+    }
   }
 
   // Close the course modal
   closeCourse() {
     this.selectedCourse = null;
-    document.body.classList.remove('modal-open');
+    if (typeof document !== 'undefined') {
+      try { document.body.classList.remove('modal-open'); } catch (e) {}
+    }
   }
 
   goToSlide(index: number) {
@@ -396,9 +402,11 @@ export class HomeComponent implements OnInit {
   }
 
   scrollToSection(sectionId: string) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (typeof document !== 'undefined') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     this.isMenuOpen = false;
   }

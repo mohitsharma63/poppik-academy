@@ -17,9 +17,11 @@ export class PoliciesComponent implements OnInit {
     this.route.fragment.subscribe(fragment => {
       if (fragment) {
         setTimeout(() => {
-          const element = document.getElementById(fragment);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (typeof document !== 'undefined') {
+            const element = document.getElementById(fragment);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
           }
         }, 100);
       }
@@ -104,13 +106,17 @@ export class PoliciesComponent implements OnInit {
   ];
 
   scrollToPolicy(policyId: string) {
-    const element = document.getElementById(policyId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (typeof document !== 'undefined') {
+      const element = document.getElementById(policyId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   }
 
   scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 }
