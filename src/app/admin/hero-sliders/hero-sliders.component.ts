@@ -16,8 +16,6 @@ export class HeroSlidersComponent implements OnInit {
   isEditing = false;
   form: any = {
     id: null,
-    title: '',
-    subtitle: '',
     image: '',
     sort_order: 0,
     status: 'Active'
@@ -51,7 +49,12 @@ export class HeroSlidersComponent implements OnInit {
   }
 
   openEdit(slider: any) {
-    this.form = { ...slider };
+    this.form = {
+      id: slider.id,
+      image: slider.image || '',
+      sort_order: slider.sort_order || 0,
+      status: slider.status || 'Active'
+    };
     this.isEditing = true;
     this.formVisible = true;
   }
@@ -64,8 +67,6 @@ export class HeroSlidersComponent implements OnInit {
   resetForm() {
     this.form = {
       id: null,
-      title: '',
-      subtitle: '',
       image: '',
       sort_order: 0,
       status: 'Active'
@@ -95,7 +96,7 @@ export class HeroSlidersComponent implements OnInit {
   }
 
   confirmDelete(slider: any) {
-    if (confirm(`Delete slider "${slider.title}"?`)) {
+    if (confirm('Delete this slider?')) {
       this.adminService.deleteHeroSlider(slider.id).subscribe({
         next: () => this.loadSliders(),
         error: () => alert('Delete failed')

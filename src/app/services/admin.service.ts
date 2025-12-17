@@ -30,15 +30,22 @@ export class AdminService {
 
   setAdminId(adminId: number): void {
     console.log('[AdminService] setAdminId():', adminId);
+    // Store adminId for app usage
     localStorage.setItem('adminId', adminId.toString());
+    // Also set a token flag expected by AdminAuthGuard so route guards allow access
+    localStorage.setItem('adminToken', adminId.toString());
   }
 
   isLoggedIn(): boolean {
-    return this.getAdminId() !== null;
+    // Consider either an adminId or an adminToken as logged-in indicators
+    return this.getAdminId() !== null || !!(localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken'));
   }
 
   clearAdminSession(): void {
     localStorage.removeItem('adminId');
+    // Remove the token flag too
+    localStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminToken');
   }
 
   // Dashboard Stats

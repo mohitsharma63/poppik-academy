@@ -16,11 +16,7 @@
 
     <div *ngIf="sliders.length > 0" class="sliders-grid">
       <div *ngFor="let slider of sliders; trackBy: trackById" class="slider-card">
-        <img [src]="slider.image" [alt]="slider.title">
-        <div class="slider-info">
-          <h3>{{ slider.title }}</h3>
-          <p>{{ slider.subtitle }}</p>
-        </div>
+        <img [src]="slider.image" alt="Slider image">
         <div class="slider-actions">
           <button class="action-btn edit" (click)="openEdit(slider)"><span class="material-icons">edit</span></button>
           <button class="action-btn delete" (click)="confirmDelete(slider)"><span class="material-icons">delete</span></button>
@@ -33,14 +29,6 @@
       <div class="modal" (click)="$event.stopPropagation()">
         <button class="modal-close" (click)="cancelForm()" aria-label="Close">&times;</button>
         <h3>{{ isEditing ? 'Edit Slider' : 'Add Slider' }}</h3>
-        <div class="form-group">
-          <label>Title</label>
-          <input [(ngModel)]="form.title" />
-        </div>
-        <div class="form-group">
-          <label>Subtitle</label>
-          <input [(ngModel)]="form.subtitle" />
-        </div>
         <div class="form-group">
           <label>Image</label>
           <input type="file" (change)="onFileChange($event)" />

@@ -13,33 +13,33 @@ try {
     if ($method === 'GET') {
         $sliders = $pdo->query("SELECT * FROM hero_sliders WHERE status = 'Active' ORDER BY sort_order ASC")->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode(['success' => true, 'data' => $sliders]);
-    } 
+    }
     elseif ($method === 'POST') {
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = json_decode(file_get_contents('php://input'), true) ?: [];
         $stmt = $pdo->prepare("INSERT INTO hero_sliders (title, subtitle, image, button_text, button_link, sort_order, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([
-            $data['title'], 
-            $data['subtitle'], 
-            $data['image'], 
-            $data['button_text'], 
-            $data['button_link'], 
-            $data['sort_order'] ?? 0, 
+            $data['title'] ?? '',
+            $data['subtitle'] ?? '',
+            $data['image'] ?? '',
+            $data['button_text'] ?? '',
+            $data['button_link'] ?? '',
+            $data['sort_order'] ?? 0,
             $data['status'] ?? 'Active'
         ]);
         echo json_encode(['success' => true, 'message' => 'Slider added successfully']);
     }
     elseif ($method === 'PUT') {
         $id = $_GET['id'];
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = json_decode(file_get_contents('php://input'), true) ?: [];
         $stmt = $pdo->prepare("UPDATE hero_sliders SET title = ?, subtitle = ?, image = ?, button_text = ?, button_link = ?, sort_order = ?, status = ? WHERE id = ?");
         $stmt->execute([
-            $data['title'], 
-            $data['subtitle'], 
-            $data['image'], 
-            $data['button_text'], 
-            $data['button_link'], 
-            $data['sort_order'] ?? 0, 
-            $data['status'] ?? 'Active', 
+            $data['title'] ?? '',
+            $data['subtitle'] ?? '',
+            $data['image'] ?? '',
+            $data['button_text'] ?? '',
+            $data['button_link'] ?? '',
+            $data['sort_order'] ?? 0,
+            $data['status'] ?? 'Active',
             $id
         ]);
         echo json_encode(['success' => true, 'message' => 'Slider updated successfully']);
